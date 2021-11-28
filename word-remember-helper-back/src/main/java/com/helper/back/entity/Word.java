@@ -23,4 +23,6 @@ public class Word {
     private Integer unRememberTimes;
 
     private LocalDateTime rememberDate;
+
+    private Boolean isRemember;
 }

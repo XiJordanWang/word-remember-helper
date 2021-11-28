@@ -1,6 +1,7 @@
 package com.helper.back.controller;
 
 import com.helper.back.common.PageParam;
+import com.helper.back.common.QueryParam;
 import com.helper.back.common.Result;
 import com.helper.back.entity.Word;
 import com.helper.back.service.WordService;
@@ -21,12 +22,23 @@ public class WordController {
         return Result.success(wordService.words(param));
     }
 
+    @GetMapping("/review")
+    public Result<?> review(QueryParam param) {
+        return Result.success(wordService.review(param));
+    }
+
     @PostMapping
     public Result<?> add(@RequestBody Word word) {
         if (StringUtils.isBlank(word.getWordEn()) || StringUtils.isBlank(word.getWordDescription())) {
             return Result.fail("有没传的字段");
         }
         wordService.add(word);
+        return Result.success();
+    }
+
+    @PutMapping
+    public Result<?> update(@RequestBody Word word) {
+        wordService.update(word);
         return Result.success();
     }
 }

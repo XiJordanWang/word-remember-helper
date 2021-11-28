@@ -45,9 +45,11 @@
     <a-button class="add-button" @click="addWord">Add</a-button>
     <div class="search-result-list">
       <a-table
+        rowKey="id"
         :columns="columns"
         :data-source="data"
         :pagination="pagination"
+        @change="handleTableChange"
       ></a-table>
     </div>
     <AddWordModal ref="add" />
@@ -62,6 +64,9 @@ export default {
       expand: false,
       form: this.$form.createForm(this, { name: "advanced_search" }),
       pagination: {
+        current: 1,
+        pageSize: 10,
+        total: 0,
         showSizeChanger: true,
         pageSizeOptions: ["10", "20", "30", "40"],
       },
@@ -107,13 +112,18 @@ export default {
         url: "/word/words",
         method: "GET",
         params: {
-          current: 0,
-          pageSize: 10,
+          current: this.pagination.current - 1,
+          pageSize: this.pagination.pageSize,
         },
       }).then((response) => {
         this.data = response.data.data.content;
         console.log(response.data);
+        this.pagination.total = response.data.data.totalElements;
       });
+    },
+    handleTableChange(pagination) {
+      this.pagination = pagination;
+      this.getData();
     },
     addWord() {
       this.$refs.add.show();
