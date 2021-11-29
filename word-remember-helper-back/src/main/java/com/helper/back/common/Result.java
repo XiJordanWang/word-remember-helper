@@ -3,8 +3,6 @@ package com.helper.back.common;
 import lombok.Builder;
 import lombok.Data;
 
-import java.sql.ResultSet;
-
 @Data
 @Builder
 public class Result<T> {

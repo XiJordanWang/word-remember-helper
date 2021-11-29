@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.sql.ResultSet;
 
 @RestController
 @RequestMapping("/api/v1/word")
@@ -39,6 +40,18 @@ public class WordController {
     @PutMapping
     public Result<?> update(@RequestBody Word word) {
         wordService.update(word);
+        return Result.success();
+    }
+
+    @PatchMapping("/forget/{id}")
+    public Result<?> forget(@PathVariable Integer id) {
+        wordService.forget(id);
+        return Result.success();
+    }
+
+    @PatchMapping("/remember/{id}")
+    public Result<?> remember(@PathVariable Integer id) {
+        wordService.remember(id);
         return Result.success();
     }
 }

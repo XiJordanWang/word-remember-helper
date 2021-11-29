@@ -16,4 +16,8 @@ public interface WordService {
     void add(Word word);
 
     void update(Word word);
+
+    void forget(Integer id);
+
+    void remember(Integer id);
 }
