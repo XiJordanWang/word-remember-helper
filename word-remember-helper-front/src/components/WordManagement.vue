@@ -109,7 +109,7 @@ export default {
   methods: {
     getData() {
       this.$http({
-        url: "/word/words",
+        url: "/api/word/words",
         method: "GET",
         params: {
           current: this.pagination.current - 1,

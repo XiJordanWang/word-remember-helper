@@ -53,7 +53,7 @@ export default {
             wordEn: this.ruleForm.wordEn,
             wordDescription: this.ruleForm.wordDescription,
           };
-          this.$http.post("/word", data).then((response) => {
+          this.$http.post("/api/word", data).then((response) => {
             if (response.data.code === 200) {
               this.visible = false;
               this.$parent.getData();
