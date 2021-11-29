@@ -1,30 +1,14 @@
 <template>
   <div class="container">
-    <div class="search">
-      <a-select v-model="total" style="width: 120px">
-        <a-select-option value="10"> 10 </a-select-option>
-        <a-select-option value="20"> 20 </a-select-option>
-        <a-select-option value="50"> 50 </a-select-option>
-        <a-select-option value="100"> 100 </a-select-option>
-      </a-select>
-      <a-range-picker @change="onChange" />
-    </div>
-    <div class="header-button">
-      <a-button class="button" type="primary"> 乱序背诵 </a-button>
-      <a-button class="button"> 顺序背诵 </a-button>
-    </div>
-    <div class="word-card">
-      <a-card title="Default size card" style="width: 300px">
-        <a slot="extra" @click="showDescription(1)">show description</a>
-        <p>card content</p>
-        <p>card content</p>
-        <p>card content</p>
-      </a-card>
-      <a-card title="Default size card" style="width: 300px">
-        <a slot="extra" @click="showDescription(1)">show description</a>
-        <p>card content</p>
-        <p>card content</p>
-        <p>card content</p>
+    <div :key="item.id" class="word-card" v-for="item in data">
+      <a-card :title="item.wordEn">
+        <a slot="extra" @click="showDescription(item.id)">show description</a>
+        <p v-show="item.isShow">{{ item.wordDescription }}</p>
+        <a-input-search
+          v-model="item.inputValue"
+          placeholder="input description"
+          @search="onSearch(item.id)"
+        />
       </a-card>
     </div>
   </div>
@@ -33,20 +17,60 @@
 <script>
 export default {
   data() {
-    return {
-      total: 10,
-      startDate: "",
-      endDate: "",
-    };
+    return { data: [] };
+  },
+  created() {
+    this.getReviewDate();
   },
   methods: {
-    onChange(date, dateString) {
-      console.log(date);
-      this.startDate = dateString[0];
-      this.endDate = dateString[1];
+    getReviewDate() {
+      this.$http.get("/api/word/review").then((response) => {
+        if (response.data.code === 200) {
+          let data = response.data.data;
+          data.forEach((item) => {
+            item.isShow = false;
+            item.inputValue = "";
+          });
+          this.data = data;
+        }
+      });
     },
     showDescription(id) {
-      console.log(id);
+      let item = this.data.find((item) => item.id === id);
+      item.isShow = true;
+      this.$set(this.data, item);
+      this.forget(id);
+    },
+    onSearch(id) {
+      let item = this.data.find((item) => item.id === id);
+      let wordDescription = item.wordDescription
+        .trim()
+        .replaceAll("a", "")
+        .replaceAll("v", "")
+        .replaceAll(";", "")
+        .replaceAll("；", "")
+        .replaceAll(",", "")
+        .replaceAll("，", "")
+        .replaceAll("n", "")
+        .replaceAll(".", "");
+      let inputValue = item.inputValue.trim();
+      let validate = wordDescription.includes(inputValue);
+      if (validate) {
+        this.data.splice(item, 1);
+        alert("答对了！");
+        this.$http.patch("/api/word/remember/" + id).then((response) => {
+          console.log(response.data);
+        });
+      } else {
+        alert("答错了！");
+        this.forget(id);
+        this.showDescription(id);
+      }
+    },
+    forget(id) {
+      this.$http.patch("/api/word/forget/" + id).then((response) => {
+        console.log(response.data);
+      });
     },
   },
 };
@@ -66,6 +90,6 @@ export default {
   margin-right: 10px;
 }
 .word-card {
-  margin-top: 20px;
+  margin: 20px;
 }
 </style>
