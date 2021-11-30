@@ -28,6 +28,11 @@ public class WordController {
         return Result.success(wordService.review(param));
     }
 
+    @GetMapping("/random-review/{total}")
+    public Result<?> randomReview(@PathVariable Integer total) {
+        return Result.success(wordService.randomReview(total));
+    }
+
     @PostMapping
     public Result<?> add(@RequestBody Word word) {
         if (StringUtils.isBlank(word.getWordEn()) || StringUtils.isBlank(word.getWordDescription())) {

@@ -41,6 +41,12 @@ public class WordServiceImpl implements WordService {
     }
 
     @Override
+    public List<Word> randomReview(Integer total) {
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        return (List<Word>) entityManager.createQuery("select word from Word word ORDER BY RAND() ").setMaxResults(total).getResultList();
+    }
+
+    @Override
     public void add(Word word) {
         word.setUnRememberTimes(0);
         word.setRememberDate(LocalDateTime.now());
@@ -78,12 +84,15 @@ public class WordServiceImpl implements WordService {
         if (optional.isPresent()) {
             query = optional.get();
         }
+        if (query.getUnRememberTimes() > 0) {
+            query.setUnRememberTimes(query.getUnRememberTimes() - 1);
+        }
         query.setIsRemember(true);
         wordRepository.save(query);
     }
 
     private Specification<Word> disRemember() {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.gt(root.get("unRememberTimes"), 0);
+        return (root, query, criteriaBuilder) -> criteriaBuilder.gt(root.get("unRememberTimes"), 3);
     }
 
     private Specification<Word> whereLastStudyDate() {

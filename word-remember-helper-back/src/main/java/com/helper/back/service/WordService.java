@@ -13,6 +13,8 @@ public interface WordService {
 
     List<Word> review(QueryParam param);
 
+    List<Word> randomReview(Integer total);
+
     void add(Word word);
 
     void update(Word word);
