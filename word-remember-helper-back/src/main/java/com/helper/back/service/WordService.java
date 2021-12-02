@@ -11,6 +11,8 @@ public interface WordService {
 
     Page<Word> words(PageParam param);
 
+    List<Word> showForgets();
+
     List<Word> review(QueryParam param);
 
     List<Word> randomReview(Integer total);

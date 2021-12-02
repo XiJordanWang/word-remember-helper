@@ -16,8 +16,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class WordServiceImpl implements WordService {
@@ -31,6 +33,11 @@ public class WordServiceImpl implements WordService {
     @Override
     public Page<Word> words(PageParam param) {
         return wordRepository.findAll(PageRequest.of(param.getCurrent(), param.getPageSize(), Sort.by("rememberDate").descending()));
+    }
+
+    @Override
+    public List<Word> showForgets() {
+        return wordRepository.findAll(disRemember()).stream().sorted(Comparator.comparing(Word::getUnRememberTimes).reversed()).collect(Collectors.toList());
     }
 
     @Override
@@ -92,7 +99,7 @@ public class WordServiceImpl implements WordService {
     }
 
     private Specification<Word> disRemember() {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.gt(root.get("unRememberTimes"), 3);
+        return (root, query, criteriaBuilder) -> criteriaBuilder.gt(root.get("unRememberTimes"), 0);
     }
 
     private Specification<Word> whereLastStudyDate() {

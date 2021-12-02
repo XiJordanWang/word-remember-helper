@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.sql.ResultSet;
 
 @RestController
 @RequestMapping("/api/v1/word")
@@ -21,6 +20,11 @@ public class WordController {
     @GetMapping("/words")
     public Result<?> words(PageParam param) {
         return Result.success(wordService.words(param));
+    }
+
+    @GetMapping("/show-forgets")
+    public Result<?> showForgets() {
+        return Result.success(wordService.showForgets());
     }
 
     @GetMapping("/review")
