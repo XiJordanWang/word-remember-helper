@@ -64,6 +64,10 @@ export default {
         .replaceAll("n", "")
         .replaceAll(".", "");
       let inputValue = item.inputValue.trim();
+      if (inputValue === "") {
+        alert("输入答案");
+        return;
+      }
       let validate = wordDescription.includes(inputValue);
       if (validate) {
         this.data.splice(this.data.indexOf(item), 1);
